@@ -1,14 +1,15 @@
+const { isValidObjectId } = require('../config/database');
 const mongoose = require('../config/database');
 
-const Schema = mongoose.Schema;
-
-const TaskSchema = new Schema({
-    macaddress: { type: String, required: true },
+const TaskSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, required: false },
     when: { type: Date, required: true },
     done: { type: Boolean, default: false },
-    created: { type: Date, defualt: Date.now() }
+    created: { type: Date, default: Date.now() },
+    userId: { type: String, required: true }
 });
 
-module.exports = mongoose.model('Task', TaskSchema);
+const Task = mongoose.model('Task', TaskSchema);
+
+module.exports = Task;
