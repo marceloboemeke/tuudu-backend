@@ -53,7 +53,7 @@ class TaskController {
                     if (response)
                         return res.status(200).json(response);
                     else
-                        return res.status(404).json({ error: 'Tarefa não encontrada' });
+                        return res.status(404).json({ error: 'Task not found', code: 34 });
                 })
                 .catch(error => {
                     return res.status(500).json(error);
