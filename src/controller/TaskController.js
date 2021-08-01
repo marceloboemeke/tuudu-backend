@@ -10,8 +10,6 @@ const {
     endOfYear
 } = require('date-fns');
 
-const current = new Date();
-
 class TaskController {
 
     async create(req, res) {
@@ -81,6 +79,7 @@ class TaskController {
     }
 
     async late(req, res) {
+        const current = new Date();
         await TaskModel.find({
                 'when': { '$lt': current },
                 'done': {'$eq': false},
@@ -96,6 +95,7 @@ class TaskController {
     }
 
     async today(req, res) {
+        const current = new Date();
         await TaskModel.find({
                 'userId': { '$in': req.body.userId },
                 'when': { '$gte': startOfDay(current), '$lte': endOfDay(current) }
@@ -110,6 +110,7 @@ class TaskController {
     }
 
     async week(req, res) {
+        const current = new Date();
         await TaskModel.find({
                 'userId': { '$in': req.body.userId },
                 'when': { '$gte': startOfWeek(current), '$lte': endOfWeek(current) }
@@ -124,6 +125,7 @@ class TaskController {
     }
 
     async month(req, res) {
+        const current = new Date();
         await TaskModel.find({
                 'userId': { '$in': req.body.userId },
                 'when': { '$gte': startOfMonth(current), '$lte': endOfMonth(current) }
@@ -138,6 +140,7 @@ class TaskController {
     }
 
     async year(req, res) {
+        const current = new Date();
         await TaskModel.find({
                 'userId': { '$in': req.body.userId },
                 'when': { '$gte': startOfYear(current), '$lte': endOfYear(current) }

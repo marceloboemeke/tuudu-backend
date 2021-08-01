@@ -1,5 +1,19 @@
 const express = require('express');
 
+//Tests only
+const { 
+    startOfDay, 
+    endOfDay, 
+    startOfWeek, 
+    endOfWeek, 
+    startOfMonth, 
+    endOfMonth, 
+    startOfYear,
+    endOfYear
+} = require('date-fns');
+const current = new Date();
+//
+
 const cors = require('cors');
 const app = express();
 app.use(cors());
@@ -16,4 +30,6 @@ app.use('/auth', AuthRoutes);
 
 app.listen(3333, () => {
     console.log("api online");
+    console.log(startOfDay(current));
+    console.log(endOfDay(current));
 });

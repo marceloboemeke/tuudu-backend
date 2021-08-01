@@ -1,6 +1,8 @@
 const UserModel = require('../model/UserModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const mailer = require('../modules/mailer');
 
 const authConfig = require('../config/Auth.json');
 // const router = express.Router();
@@ -78,10 +80,10 @@ class UserController {
         const user = await UserModel.findOne({ email }).select('+password');
 
         if (!user)
-            return res.status(400).json({ error: 'User not found' });
+            return res.status(400).json({ error: 'User not found', code: 25 });
 
         if (! await bcrypt.compare(password, user.password))
-            return res.status(400).json({ error: 'Invalid password'});
+            return res.status(400).json({ error: 'Invalid password', code: 26});
 
         user.password = undefined;
 
@@ -97,6 +99,48 @@ class UserController {
             req.body.userId = decoded.params.id;
             return res.status(200).json({ valid: true });
         });
+    }
+
+    async forgotpassword(req, res) {
+        const { email } = req.body;
+
+        try {
+            const user = await UserModel.findOne({ email });
+
+            if (!user)
+                return res.status(400).send({ error: 'User not found' });
+
+            const token = crypto.randomBytes(20).toString('hex');
+
+            const now = new Date();
+            now.setHours(now.getHours() +1);
+
+            await UserModel.findByIdAndUpdate(user.id, {
+                '$set': {
+                    passwordResetToken: token,
+                    passwordResetExpires: now
+                }
+            });
+
+            mailer.sendMail({
+                to: email,
+                from: {
+                    name: 'Tuudu',
+                    address: 'tuudu@marceloboemeke.com.br'
+                },
+                subject: 'Recuperação de senha Tuudu',
+                template: 'auth/forgot_password',
+                context: { token }
+            }, (err) => {
+                if (err) {
+                    return res.status(400).send({ error: 'Cannot send password recovery email'})
+                }
+                
+                res.status(200).json({ generated: 'Success' });
+            });
+        } catch (err) {
+            res.status(400).send({ error: 'Error on forgot password' });
+        }
     }
 
 }
