@@ -122,7 +122,7 @@ class UserController {
                 }
             });
 
-            mailer.sendMail({
+            mailer.sendMail({ 
                 to: email,
                 from: {
                     name: 'Tuudu',
